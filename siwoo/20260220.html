@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+    <script>
+
+        //1️⃣ 기본 세팅
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // 하늘색 배경
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        const floorGeometry = new THREE.PlaneGeometry(20, 20); // 형태
+        const floorMaterial = new THREE.MeshBasicMaterial({
+            color: "#7CFC00",
+            side: THREE.DoubleSide
+        }); // 색, 속성 등
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial); // 메쉬 생성
+        floor.rotation.x = Math.PI / 2; // 바닥에 붙이기
+        camera.position.set(0, 8, 12); // 카메라 포지션 설정 (x:0, y:8, z:12)
+        scene.add(floor); //  씬 추가
+
+
+        //   3️⃣ 큐브 여러 개 만들기
+
+        const group = new THREE.Group();
+        scene.add(group);
+
+        const geometry = new THREE.BoxGeometry();
+
+        for (let i = 0; i < 10; i++) {
+
+            const material = new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff
+            });
+
+            const cube = new THREE.Mesh(geometry, material);
+
+            cube.position.x = (i - 2) * 2;
+            cube.position.y = 0.5;
+            if (i % 2 == 0) {
+                cube.position.z = 2;
+            }
+
+            group.add(cube);
+        }
+        camera.position.set(0, 7, 10); // x,y,z축 포지션 모두 변경
+        camera.lookAt(0, 2, 6); // 카메라의 시선을 바꾸는 명령어 lookAtcamera.position.z =5; // z축만 포지션 변경 (카메라 더 멀어지게)
+
+        // 키보드 입력 상태 저장
+        const keys = {};
+
+        document.addEventListener("keydown", function (e) {
+            keys[e.key] = true;
+        });
+
+        document.addEventListener("keyup", function (e) {
+            keys[e.key] = false;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            group.rotation.y += 0.01;
+
+            if (keys["ArrowRight"]) {
+                group.position.x += 0.1;
+            }
+            if (keys["ArrowLeft"]) group.position.x -= 0.1;
+            if (keys["ArrowUp"]) group.position.z -= 0.1;
+            if (keys["ArrowDown"]) group.position.z += 0.1;
+
+
+            renderer.render(scene, camera);
+
+        }
+        animate();
+
+    </script>
+
+</body>
+
+</html>

@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+    <script>
+
+        //1️⃣ 기본 세팅
+
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x87ceeb); // 하늘색 배경
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.shadowMap.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        const floorGeometry = new THREE.PlaneGeometry(20, 20); // 형태
+        const floorMaterial = new THREE.MeshBasicMaterial({
+            color: "#7CFC00",
+            side: THREE.DoubleSide
+        }); // 색, 속성 등
+
+        const floor = new THREE.Mesh(floorGeometry, floorMaterial); // 메쉬 생성
+        floor.rotation.x = Math.PI / 2; // 바닥에 붙이기
+        camera.position.set(0, 8, 12); // 카메라 포지션 설정 (x:0, y:8, z:12)
+        floor.receiveShadow = true;
+        scene.add(floor); //  씬 추가
+
+        const cubeMaterial = new THREE.MeshStandardMaterial({
+        });
+
+        const cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
+        const cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+        cube.position.y = 0.5;
+        cube.castShadow = true; // ⭐ 그림자 생성
+        scene.add(cube);
+
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
+        scene.add(ambientLight);
+
+        const light = new THREE.DirectionalLight(0xffffff, 1);
+        light.position.set(5, 10, 5);
+        light.castShadow = true;
+        scene.add(light);
+
+        light.shadow.mapSize.width = 1024;
+        light.shadow.mapSize.height = 1024;
+
+        const keys = {};
+        document.addEventListener("keydown", function (e) {
+            keys[e.key] = true;
+        });
+
+        document.addEventListener("keyup", function (e) {
+            keys[e.key] = false;
+        });
+
+        function animate() {
+            requestAnimationFrame(animate);
+
+            cube.rotation.x += 0.01;
+            cube.rotation.y += 0.01;
+            if (keys["ArrowRight"]) {
+                camera.position.x += 0.1;
+            }
+            if (keys["ArrowLeft"]) camera.position.x -= 0.1;
+            if (keys["ArrowUp"]) camera.position.z -= 0.1;
+            if (keys["ArrowDown"]) camera.position.z += 0.1;
+            camera.lookAt(0, 0, 0);
+
+
+            renderer.render(scene, camera);
+
+        }
+        animate();
+
+    </script>
+</body>
+
+</html>

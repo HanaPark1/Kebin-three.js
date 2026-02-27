@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>Project - My 3D World</title>
+  <style>
+    body { margin: 0; overflow: hidden; }
+  </style>
+</head>
+<body>
+
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+
+<script>
+// 1️⃣ Scene
+
+const scene = new THREE.Scene(); // Scene 생성
+scene.background = new THREE.Color(0x87CEEB); // Scene 배경색 설정
+
+// 2️⃣ Camera
+
+const camera = new THREE.PerspectiveCamera(
+  75,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000
+); //  Camera 생성
+
+camera.position.set(0, 5, 15); // camera 위치 설정 (물리적인 위치)
+camera.lookAt(0, 0, 0); // camera 시선 설정 (바라보는 위치)
+
+// 3️⃣ Renderer
+
+const renderer = new THREE.WebGLRenderer({ antialias: true }); // 렌더러 생성
+renderer.setSize(window.innerWidth, window.innerHeight); // 렌더러 사이즈 설정 (윈도우 크기에 맞게)
+renderer.shadowMap.enabled = true; // 그림자 설정 1단계 (렌더러 내 shadowMap 설정)
+document.body.appendChild(renderer.domElement); // 렌더러 추가
+
+// 4️⃣ Texture
+
+const loader = new THREE.TextureLoader(); // 텍스처를 읽어내는 텍스처로더 생성
+
+const floorTexture = loader.load(
+  "https://threejs.org/examples/textures/brick_diffuse.jpg"
+); //  텍스처 링크 혹은 이미지 파일 경로를 사용해서 load
+
+floorTexture.wrapS = THREE.RepeatWrapping; // 텍스처 패턴을 반복할 수 있게 설정
+floorTexture.wrapT = THREE.RepeatWrapping; // 텍스처 패턴을 반복할 수 있게 설정
+floorTexture.repeat.set(5, 5); // 텍스처 패턴을 5*5로 반복
+
+// 5️⃣ Floor
+
+const floorGeometry = new THREE.PlaneGeometry(30, 30); // Plane 형태 지정 (벽)
+const floorMaterial = new THREE.MeshStandardMaterial({
+  map: floorTexture,
+  side: THREE.DoubleSide
+}); //  floorTexture의 이미지를 입힌 floorMaterial 설정
+
+const floor = new THREE.Mesh(floorGeometry, floorMaterial); //  벽 메쉬 생성
+floor.rotation.x = -Math.PI / 2; // 바닥으로 눕히기
+floor.receiveShadow = true; // 그림자 설정 3단계 (물체 지정)
+scene.add(floor); // 씬에 바닥 추가
+
+// 6️⃣ Sample Objects (기본 배치)
+
+for (let i = 0; i < 5; i++) {
+  const box = new THREE.Mesh(
+    new THREE.BoxGeometry(2, 2, 2), // 큐브 형태 지정
+    new THREE.MeshStandardMaterial({ color: 0xff4444 }) // 0xff4444 컬러를 가짐
+  ); // 각 지오메트리와 머터리얼을 가지는 메쉬 생성
+  box.position.set(
+    (Math.random() - 0.5) * 20,
+    1,
+    (Math.random() - 0.5) * 20
+  ); // 박스의 위치를 (랜덤, 1, 랜덤) 하게 줌
+  box.castShadow = true; // 그림자 설정 3단계 (물체 지정)
+  scene.add(box); // 씬에 박스 추가
+} // 이 함수를 5번 반복 (5개의 박스 생성)
+
+// 7️⃣ Light
+
+const ambient = new THREE.AmbientLight(0xffffff, 0.4);
+scene.add(ambient); // 공간이 밝아지는 조명 추가
+
+const light = new THREE.DirectionalLight(0xffffff, 1);
+light.position.set(10, 15, 10); // 태양빛이 어디를 밝힐지 위치 조절
+light.castShadow = true; // 그림자 설정 2단계 빛에 그림자 주기
+scene.add(light); // 씬에 태양빛 추가
+
+
+// 8️⃣ KeyBoard Input
+
+const keys = {}; // 누르고 있는 키의 상태를 저장
+
+document.addEventListener("keydown", e => keys[e.key] = true); // 누르고 있을 때는 true
+document.addEventListener("keyup", e => keys[e.key] = false); // 누르고 있지 않을 때는 false
+
+
+// 9️⃣ Animation
+
+const speed = 0.2; 
+
+function animate() {
+  requestAnimationFrame(animate); // 계속되는 함수 호출로 지속적인 업데이트
+
+  if (keys["ArrowUp"]) camera.position.z -= speed; // 방향키를 누르면 포지션 변경
+  if (keys["ArrowDown"]) camera.position.z += speed; // 방향키를 누르면 포지션 변경
+  if (keys["ArrowLeft"]) camera.position.x -= speed; // 방향키를 누르면 포지션 변경
+  if (keys["ArrowRight"]) camera.position.x += speed; // 방향키를 누르면 포지션 변경
+
+  camera.position.x = Math.max(-25, Math.min(25, camera.position.x)); // 일정 위치에서 벗어나지 않도록 설정
+  camera.position.z = Math.max(-25, Math.min(25, camera.position.z)); // 일정 위치에서 벗어나지 않도록 설정
+
+  camera.lookAt(0, 0, 0); // 움직임으로 화면이 업데이트 되어도 카메라 시선을 항상 (0,0,0)으로 설정
+
+  renderer.render(scene, camera); // 렌더러를 통해 화면 송출
+}
+
+animate(); // 애니메이션 함수 호출
+
+</script>
+
+</body>
+</html>

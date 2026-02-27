@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>siwoo</title>
+</head>
+
+<body>
+    // 기본 세팅
+    <!-- three.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+    <script>
+        // 1️⃣ 기본 세팅 (scene / camera / renderer)
+        const scene = new THREE.Scene();
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            window.innerWidth / window.innerHeight,
+            0.1,
+            1000
+        );
+
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+
+        camera.position.z = 10;
+        
+        // 2️⃣ 여러 개의 큐브 만들기
+        const cubes = [];
+
+        const geometry = new THREE.ConeGeometry();
+
+        for (let i = 0; i < 50; i++) {
+
+            const material = new THREE.MeshBasicMaterial({
+                color: Math.random() * 0xffffff
+            });
+
+            const cube = new THREE.Mesh(geometry, material);
+
+            
+
+            // 랜덤 위치 배치
+            cube.position.x = (Math.random() - 0.5) * 8;
+            cube.position.y = (Math.random() - 0.5) * 5;
+            cube.position.z = (Math.random() - 0.5) * 5;
+
+            scene.add(cube);
+            cubes.push(cube);
+        }
+        const raycaster = new THREE.Raycaster();
+        const mouse = new THREE.Vector2();
+
+
+        window.addEventListener("click", function (event) {
+
+            mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+            mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+
+            raycaster.setFromCamera(mouse, camera);
+            const intersects = raycaster.intersectObjects(scene.children);
+            if (intersects.length > 0) {
+                intersects[0].object.material.color.set(Math.random() * 0xffffff);
+                console.log("Cube click!");
+            }
+
+        });
+
+        // 애니메이션
+        function animate() {
+            requestAnimationFrame(animate);
+
+            // 모든 큐브 회전
+            cubes.forEach(cube => {
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+            });
+
+            renderer.render(scene, camera);
+        }
+
+        animate();
+    </script>
+
+</body>
+
+</html>

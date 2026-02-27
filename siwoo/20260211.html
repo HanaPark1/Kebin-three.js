@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+
+    <script>
+        // 1️⃣ 세상(Scene) 만들기
+        const scene = new THREE.Scene();
+
+        // 2️⃣ 카메라(Camera) 만들기
+        const camera = new THREE.PerspectiveCamera(
+            75,                                   // 시야각
+            window.innerWidth / window.innerHeight, // 화면 비율
+            0.1,                                  // 가까운 거리
+            1000                                  // 먼 거리
+        );
+
+        // 3️⃣ 렌더러(Renderer) 만들기
+        const renderer = new THREE.WebGLRenderer();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.body.appendChild(renderer.domElement);
+        // 4️⃣ 박스 만들기
+        const geometry = new THREE.BoxGeometry();
+        const material = new THREE.MeshBasicMaterial({ color: "#ffffff" });
+        const cube = new THREE.Mesh(geometry, material);
+        
+        const geometry2 = new THREE.ConeGeometry();
+        const material2 = new THREE.MeshBasicMaterial({ color: "#0080ff" });
+        const cube2 = new THREE.Mesh(geometry2, material2);
+
+        const heartShape = new THREE.Shape()
+        heartShape.moveTo(25, 25);
+        heartShape.bezierCurveTo(25, 25, 20, 0, 0, 0);
+        heartShape.bezierCurveTo(-30, 0, -30, 35, -30, 35);
+        heartShape.bezierCurveTo(-30, 55, -10, 77, 25, 95);
+        heartShape.bezierCurveTo(60, 77, 80, 55, 80, 35);
+        heartShape.bezierCurveTo(80, 35, 80, 0, 50, 0);
+        heartShape.bezierCurveTo(35, 0, 25, 25, 25, 25);
+        const geometry3 = new THREE.ShapeGeometry(heartShape);
+        const material3 = new THREE.MeshBasicMaterial({ color: 0x00ff00, side: THREE.DoubleSide });
+        const mesh = new THREE.Mesh(geometry3, material3);
+        mesh.position.set(5, 0, 0);
+        mesh.scale.set(0.05, 0.05, 0.05);
+
+        scene.add(mesh);
+        scene.add(cube);
+        scene.add(cube2);
+
+        camera.position.z = 10;
+
+        // 키보드 입력 상태 저장
+        const keys = {};
+
+        document.addEventListener("keydown", function (e) {
+            keys[e.key] = true;
+        });
+
+        document.addEventListener("keyup", function (e) {
+            keys[e.key] = false;
+        });
+        function animate() {
+            requestAnimationFrame(animate);
+
+            cube.rotation.x += 0.05;
+            cube.rotation.y += 0.05;
+
+            cube2.rotation.x += 0.05;
+            cube2.rotation.y += 0.05;
+
+            mesh.rotation.x += 0.05;
+            mesh.rotation.y += 0.05;
+
+
+
+
+            // 키보드 이동
+            if (keys["ArrowRight"]) cube.position.x += 0.1;
+            if (keys["ArrowLeft"]) cube.position.x -= 0.1;
+            if (keys["ArrowUp"]) cube.position.z -= 0.1;
+            if (keys["ArrowDown"]) cube.position.z += 0.1;
+
+            // 간단한 목표 조건
+            if (cube.position.x > 3) {
+                console.log("Success!");
+            }
+
+            renderer.render(scene, camera);
+        }
+
+
+        animate();
+    </script>
+</body>
+
+</html>

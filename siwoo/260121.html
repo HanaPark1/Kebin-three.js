@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+<canvas id="game" width="1000" height="1000"></canvas>
+<script>
+    const canvas = document.getElementById('game'); // 도화지
+  const ctx = canvas.getContext('2d'); // 붓
+  let x = 0;
+let speed = 10;
+ctx.fillStyle = "#f80101";
+function animate() {
+  ctx.clearRect(0, 0, 1000, 1000);
+  ctx.fillRect(x, 130, 100, 100);
+  x = x + speed;
+  if (x > 1000) {
+  x = -40;
+}
+  requestAnimationFrame(animate);
+}
+
+animate();
+
+</script>  
+</body>
+</html>

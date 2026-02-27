@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <canvas id="c" width="400" height="300"></canvas>
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        // 2️⃣ 캐릭터들을 담을 상자 (배열)
+        const characters = [
+            { x: 0, y: 50, speed: 2, img: "cat.png" },
+            { x: 100, y: 120, speed: 3, img: "dog.png" },
+            { x: 200, y: 200, speed: 1, img: "hamster.png" },
+            { x: 300, y: 280, speed: 2, img: "squirrel.png" }
+        ];
+
+
+        const size = 30;
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            for (let i = 0; i < characters.length; i++) {
+                const c = characters[i];
+
+                c.image = new Image();
+                c.image.src = c.img;
+
+                
+                ctx.drawImage(c.image, c.x, c.y, size, size);
+                c.x += c.speed;
+                if (c.x > canvas.width) {
+                    c.x = -size;
+                }
+            }
+
+            requestAnimationFrame(animate);
+        }
+
+        animate();
+    </script>
+</body>
+
+</html>

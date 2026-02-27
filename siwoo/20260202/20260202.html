@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body {
+            text-align: center;
+        }
+
+        canvas {
+            border: 1px solid #ccc;
+            margin-top: 10px;
+            background: #f0f0f0;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>🎮 키보드로 캐릭터를 움직여 보세요</h2>
+    <p>방향키 (← ↑ → ↓)</p>
+    <!-- 게임 화면 -->
+    <canvas id="c" width="400" height="300"></canvas>
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+        let size = 60
+        // 캐릭터 배열
+        const characters = [
+            { x: 50, y: 130, speed: 0, img: "player.png" }, // 플레이어
+            { x: 0, y: 60, speed: 2, img: "npc1.png" },  // NPC
+            { x: 0, y: 200, speed: 3, img: "npc2.png" }   // NPC
+        ];
+        // 이미지 로드
+        characters.forEach(c => {
+            c.image = new Image();
+            c.image.src = c.img;
+        });
+
+        // 내가 조종할 캐릭터
+        const player = characters[0];
+        document.addEventListener("keydown", function (e) {
+            if (e.key === "ArrowRight") {
+                console.log(player.x);
+                if (player.x > 320) {
+                    
+                    player.x += 0;
+                } else {
+                    player.x += 20;
+                }
+            }
+            if (e.key === "ArrowLeft") {
+                player.x -= 20;
+            }
+            if (e.key === "ArrowUp") {
+                player.y -= 20;
+            }
+            if (e.key === "ArrowDown") {
+                player.y += 20;
+            }
+        });
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < characters.length; i++) {
+                const c = characters[i];
+
+                // 자동 캐릭터만 움직이기
+                if (c !== player) {
+                    c.x += c.speed;
+                    // 캔버스를 벗어나면 시작점으로 다시 복귀
+                    if (c.x > canvas.width) {
+                        c.x = -size;
+                    }
+                }
+
+
+
+                ctx.drawImage(c.image, c.x, c.y, size, size);
+            }
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+
+</html>

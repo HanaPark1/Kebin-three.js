@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <button onclick="stop()">멈춤</button>
+    <button onclick="go()">시작</button>
+    <button onclick="fast()">더 빠르게</button>
+    <button onclick="slow()">더 느리게</button>
+
+    <!-- 게임 화면 -->
+    <canvas id="c" width="400" height="300"></canvas>
+
+    <script>
+        // 1️⃣ 캔버스 준비
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        // 2️⃣ 캐릭터 상태
+        let x = 0;
+        let y = 0;
+        let speed = 2;
+
+        function stop() {
+            speed = 0;
+        y = 30}
+
+
+        function go() {
+            speed = 2;
+        x = 10}
+
+        function fast() {
+            speed = 6;
+        x = 200}
+
+        function slow() {
+            speed = 0.5;
+        y = 200}
+        ctx.fillStyle = "#00bfff";
+        function animate() {
+            ctx.clearRect(0, 0, 400, 300);
+            ctx.fillRect(x, y, 30, 30);
+            x += speed;
+            y += speed;
+            if (y > 400) y = -40;
+             if (x > 400) x = -40;
+            requestAnimationFrame(animate);
+        }
+
+        // 5️⃣ 시작
+        animate();
+    </script>
+</body>
+
+</html>

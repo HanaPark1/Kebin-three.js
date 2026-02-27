@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>점수 게임</title>
+    <style>
+        body {
+            text-align: center;
+            font-family: sans-serif;
+        }
+
+        canvas {
+            border: 2px solid black;
+            background: #f5f5f5;
+        }
+
+        .info {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+    </style>
+
+</head>
+
+<body>
+    <h2>⏱ 점수 & 시간 게임</h2>
+    <div class="info">
+        남은 시간: <span id="time">60</span>초
+
+    </div>
+    <canvas id="c" width="500" height="300"></canvas>
+    <script>
+        const canvas = document.getElementById('c');
+        const ctx = canvas.getContext('2d');
+
+        let time = 60;
+        let isGameOver = false;
+        let size = 40;
+
+        const player = {
+            x: 220,
+            y: 260,
+            speed: 30,
+            size: 10,
+            image: new Image()
+        };
+        player.image.src = "player.png";
+
+        const npcs = [
+            { x: 0, y: 200, speed: 5, size: 40, ing: "npc1.png" },
+            { x: 0, y: 200, speed: 4, size: 40, ing: "npc2.png" },
+            { x: 0, y: 200, speed: 6, size: 30, ing: "npc3.png" },
+        ]
+
+
+
+        function isColliding(a, b) {
+            return (
+                a.x < b.x + size &&
+                a.x + size > b.x &&
+                a.y < b.y + size &&
+                a.y + size > b.y
+            );
+        }
+        
+        document.addEventListener("keydown", function (e) {
+            if (isGameOver) return;
+
+            if (e.key === "d") player.x += player.speed;
+            if (e.key === "a") player.x -= player.speed;
+            if (e.key === "w") player.y -= player.speed;
+            if (e.key === "s") player.y += player.speed;
+        });
+
+        const timer = setInterval(function () {
+            if (time > 0) {
+                time--;
+                document.getElementById("time").innerText = time;
+            }
+
+            if (time <= 0) {
+                isGameOver = true;
+                clearInterval(timer);
+            }
+        }, 1000);
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < npcs.length; i++) {
+                const npc = npcs[i];
+
+                npc.image = new Image();
+                npc.image.src = npc.ing;
+
+                if (!isGameOver) {
+                    npc.y += npc.speed;
+                    if (npc.y > canvas.height) {
+                        npc.x = parseInt(Math.random() * (canvas.width - 50));
+                        npc.y = -size;
+                    }
+                }
+
+
+                if (!isGameOver && isColliding(player, npc)) {
+                    isGameOver = true;
+                    clearInterval(timer);
+
+                    // NPC 위치 리셋
+                    npc.x = -size;
+                }
+
+                // 캐릭터 그리기
+                ctx.drawImage(npc.image, npc.x, npc.y, npc.size, npc.size);
+            }
+
+            // 캐릭터 그리기
+            ctx.drawImage(player.image, player.x, player.y, size, size);
+
+            // 게임 종료 화면
+            if (isGameOver) {
+                ctx.fillStyle = "black";
+                ctx.font = "30px Arial";
+                ctx.fillText("Game Over", 170, 150);
+            }
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+
+</body>
+
+</html>

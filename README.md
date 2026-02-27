@@ -2,6 +2,6 @@
 26.01 ~ 26.02 케빈샘AI코딩학원 특강
 
 ## 커리큘럼 및 강의교안
-https://www.notion.so/three-js-3D-2ddf1ca1e4828039bcfcf7ceed7fa5df
+https://www.notion.so/2def1ca1e48280e798ecfd2609da1b3b
 
 해당 레포지토리는 특강을 진행하며 학생들의 각 차시 학습 내용 및 작업 결과물이 담겨 있습니다
